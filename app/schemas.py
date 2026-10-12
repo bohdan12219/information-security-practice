@@ -74,3 +74,11 @@ class GradeCreate(BaseModel):
     subject_id: int = Field(..., gt=0)
     grade: int = Field(..., ge=0, le=100)          # 100-бальна шкала
     comment: str | None = Field(None, max_length=500)
+    # ── Етап 5: XSS захист через санацію ──
+from app.utils import sanitize_input
+
+class GradeCreateSanitized(GradeCreate):
+    @field_validator("comment", mode="before")
+    @classmethod
+    def clean_comment(cls, v: str | None) -> str | None:
+        return sanitize_input(v)
