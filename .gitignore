@@ -1,8 +1,8 @@
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 .env
 data/*.db
-.venv/
-venv/
-.idea/
+data/*.sqlite3
 .vscode/
+.idea/

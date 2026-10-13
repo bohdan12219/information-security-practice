@@ -7,7 +7,7 @@ services:
     volumes:
       - .:/app_code
       - db_data:/app_code/data
-    env_file:         # <--- Пряме завантаження файлу замість environment:
+    env_file:
       - .env
     restart: unless-stopped
 

@@ -7,18 +7,19 @@ from app.auth.jwt_handler import verify_token
 from app.database import get_db
 from app.models import User
 
-# auto_error=False → відсутній токен обробляємо самі і повертаємо 401 (а не 403)
 bearer_scheme = HTTPBearer(auto_error=False)
 
 def _unauthorized(detail: str) -> HTTPException:
-    return HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=detail,
-                         headers={"WWW-Authenticate": "Bearer"})
+    return HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=detail,
+        headers={"WWW-Authenticate": "Bearer"},
+    )
 
 def get_current_user(
     credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     db: Session = Depends(get_db),
 ) -> User:
-    """АУТЕНТИФІКАЦІЯ: хто ти? Перевіряє JWT і повертає User або 401."""
     if credentials is None:
         raise _unauthorized("Потрібна автентифікація")
     try:
@@ -38,7 +39,6 @@ def get_current_user(
     return user
 
 def require_role(*allowed_roles: str):
-    """АВТОРИЗАЦІЯ: що тобі дозволено? Ролі беруться з БД, а не з токена."""
     def role_checker(current_user: User = Depends(get_current_user)) -> User:
         user_roles = {r.name for r in current_user.roles}
         if not user_roles.intersection(allowed_roles):
